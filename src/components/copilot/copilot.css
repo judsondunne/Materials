@@ -1,0 +1,1237 @@
+/*
+ * The copilot panel.
+ *
+ * Same visual language as the rest of the application: the shared tokens, the
+ * same two elevations, the same 130ms easing. No gradients, no glow, no chat
+ * bubbles. It has to read as another instrument in the workspace rather than a
+ * product bolted to the side of one.
+ *
+ * Colour carries the same meanings it does everywhere else — --estimate for an
+ * estimated quantity, --met and --miss for a satisfied or missed constraint,
+ * --thin for something resting on sparse data. An estimate must never look like
+ * a measurement, here least of all.
+ */
+
+.cp {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border);
+  font-size: 12.5px;
+}
+
+.cp__grip {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 7px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+.cp__grip:hover::after,
+.cp__grip:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 0 3px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+/* ── Collapsed rail ─────────────────────────────────────────────────────── */
+
+.cp__rail {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 44px;
+  height: 100vh;
+  padding-top: 16px;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.cp__rail:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+.cp__railText {
+  writing-mode: vertical-rl;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cp__railPulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: cp-pulse 1.4s var(--ease) infinite;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.cp__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 10px 10px 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.cp__brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+}
+.cp__brandName {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.cp__spacer {
+  flex: 1;
+  min-width: 0;
+}
+.cp__headActs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+}
+
+.cp__confirm {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 210px;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--elev-2);
+}
+.cp__confirm p {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+}
+
+/* ── Scroll region ──────────────────────────────────────────────────────── */
+
+.cp__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* With nothing said yet there is no conversation to anchor to the top, so the
+   opening block sits in the middle of the panel rather than stranded above a
+   column of empty space — centred on both axes, but as a COLUMN: the block is
+   given a width and centred within the panel, while the capability cards fill
+   that column edge to edge. Centring the cards themselves would collapse each
+   one to the width of its own text and lose the row rhythm entirely. Only the
+   prose is centred as text. */
+.cp__scroll--empty {
+  justify-content: center;
+  align-items: center;
+  padding: 20px 16px;
+}
+.cp__scroll--empty .cp__welcome {
+  width: 100%;
+  max-width: 330px;
+  padding-top: 0;
+}
+.cp__scroll--empty .cp__welcomeTitle,
+.cp__scroll--empty .cp__welcomeBody,
+.cp__scroll--empty .cp__welcomeFoot {
+  text-align: center;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+
+.cp__welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+.cp__welcomeTitle {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.022em;
+}
+.cp__welcomeBody {
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.cp__welcomeBody--faint {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+.cp__welcome code {
+  font-size: 11px;
+  padding: 1px 4px;
+  background: var(--bg-inset);
+  border-radius: var(--r-sm);
+}
+
+/* Four things it can do, each one a way to start doing it. The fastest way to
+   learn what a tool is for is to use it once. */
+.cp__caps {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cp__cap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 11px;
+  text-align: left;
+  border-radius: var(--r-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease),
+    transform 180ms var(--ease);
+}
+.cp__cap:hover,
+.cp__cap:focus-visible {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  transform: translateX(2px);
+}
+.cp__capIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  background: var(--bg-inset);
+  color: var(--text-muted);
+}
+.cp__cap:hover .cp__capIcon,
+.cp__cap:focus-visible .cp__capIcon { background: var(--bg-surface); color: var(--accent); }
+.cp__capText { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cp__capTitle { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+.cp__capBody { font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
+.cp__capGo {
+  display: inline-flex;
+  margin-left: auto;
+  align-self: center;
+  color: var(--text-ghost);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.cp__cap:hover .cp__capGo,
+.cp__cap:focus-visible .cp__capGo { opacity: 1; color: var(--accent); transform: translateX(2px); }
+
+.cp__welcomeFoot {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+/* ── Turns ──────────────────────────────────────────────────────────────── */
+
+.cp__turn { display: flex; flex-direction: column; gap: 9px; }
+.cp__turn--user { align-items: flex-end; }
+.cp__turn--assistant { animation: cp-in 200ms var(--ease); }
+
+/* A user turn is a quiet label, not a chat bubble: the answer is the content. */
+.cp__user {
+  max-width: 92%;
+  padding: 8px 12px;
+  background: var(--bg-inset);
+  border-radius: 14px 14px 4px 14px;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+/* ── Reasoning ──────────────────────────────────────────────────────────── */
+
+.rsn { display: flex; flex-direction: column; gap: 6px; }
+.rsn__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 3px 0;
+  text-align: left;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  transition: color var(--dur) var(--ease);
+}
+.rsn__head:not(:disabled):hover { color: var(--text-primary); }
+.rsn__head:disabled { cursor: default; }
+.rsn__glyph { display: inline-flex; flex: none; color: var(--text-faint); }
+.rsn.is-live .rsn__glyph { color: var(--accent); }
+.rsn.has-error .rsn__glyph { color: var(--miss); }
+.rsn__pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor;
+  animation: cp-breathe 1.5s var(--ease) infinite;
+}
+/* The live line is swept while it is live, so a pause reads as thinking. */
+.rsn.is-live .rsn__line {
+  background: linear-gradient(100deg, var(--text-faint) 34%, var(--text-primary) 50%, var(--text-faint) 66%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: cp-sweep 1.8s linear infinite;
+}
+.rsn__count { color: var(--text-ghost); font-size: 10.5px; }
+.rsn__chev { display: inline-flex; margin-left: auto; transition: transform 160ms var(--ease); }
+.rsn__chev.is-open { transform: rotate(180deg); }
+
+.rsn__trail {
+  margin: 0 0 0 3px;
+  padding: 0 0 0 11px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-left: 1px solid var(--border);
+}
+.rsn__step {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  animation: cp-in 180ms var(--ease);
+}
+.rsn__stepGlyph { flex: none; display: inline-flex; color: var(--text-ghost); transform: translateY(1.5px); }
+.rsn__step.is-ok .rsn__stepGlyph { color: var(--met); }
+.rsn__step.is-error { color: var(--miss); }
+.rsn__step.is-error .rsn__stepGlyph { color: var(--miss); }
+.rsn__step.is-running { color: var(--text-secondary); }
+.rsn__stepLabel { min-width: 0; }
+.rsn__stepMs { margin-left: auto; color: var(--text-ghost); font-size: 10px; }
+.rsn__stepErr { color: var(--miss); font-size: 10.5px; }
+.rsn__spin { display: inline-flex; animation: cp-spin 900ms linear infinite; }
+
+/* The streaming caret: the answer is still being written. */
+.cp__caret {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: var(--accent);
+  animation: cp-blink 1s steps(2, start) infinite;
+}
+
+/* ── Turn actions ───────────────────────────────────────────────────────── */
+
+.cp__acts { display: flex; gap: 4px; margin-top: -2px; }
+.cp__turnAct {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease), color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+}
+/*
+ * Revealed on hover and on focus. `:focus-within` rather than `:focus-visible`
+ * on the button: focus-visible depends on the browser's own heuristics about
+ * whether the focus "deserves" a ring, and a control that is invisible until
+ * the browser agrees is not a control anyone can rely on reaching.
+ */
+.cp__turn--assistant:hover .cp__turnAct,
+.cp__turn--assistant:focus-within .cp__turnAct,
+.cp__turnAct:focus { opacity: 1; }
+.cp__turnAct:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+
+.cp__prose {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-primary);
+  line-height: 1.52;
+}
+.cp__prose code {
+  font-size: 11.5px;
+}
+/* A heading inside an answer. Small, but it is what turns four paragraphs into
+   something a scientist can skim in two seconds. */
+.cp__h {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.cp__prose > .cp__h:first-child {
+  margin-top: 0;
+}
+.cp__list {
+  margin: 0;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cp__list--num {
+  padding-left: 17px;
+}
+.cp__list li {
+  line-height: 1.5;
+}
+.cp__list li::marker {
+  color: var(--text-faint);
+}
+
+.cp__err {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--miss-bg);
+  border: 1px solid var(--miss-border);
+  border-radius: var(--r);
+  color: var(--miss);
+  line-height: 1.45;
+}
+
+/* ── Activity trail ─────────────────────────────────────────────────────── */
+
+.cp__trail {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cp__trail--compact {
+  margin-top: 5px;
+  padding-left: 2px;
+}
+.cp__step {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  animation: cp-in 180ms var(--ease);
+}
+.cp__step.is-running {
+  color: var(--text-secondary);
+}
+.cp__step.is-ok .cp__stepIcon {
+  color: var(--met);
+}
+.cp__step.is-error {
+  color: var(--miss);
+}
+.cp__stepIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-faint);
+  transform: translateY(1.5px);
+}
+.cp__stepLabel {
+  min-width: 0;
+}
+.cp__stepMs,
+.cp__stepErr {
+  color: var(--text-ghost);
+  font-size: 10.5px;
+}
+.cp__stepErr {
+  color: var(--miss);
+}
+.cp__spin {
+  display: inline-flex;
+  animation: cp-spin 900ms linear infinite;
+}
+
+.cp__trailDone {
+  display: flex;
+  flex-direction: column;
+}
+.cp__trailToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  font-size: 11px;
+  color: var(--text-faint);
+  transition: color var(--dur) var(--ease);
+}
+.cp__trailToggle:hover {
+  color: var(--text-secondary);
+}
+.cp__trailDone.has-error .cp__trailToggle {
+  color: var(--miss);
+}
+.cp__trailChev {
+  display: inline-flex;
+  transition: transform var(--dur) var(--ease);
+}
+.cp__trailChev.is-open {
+  transform: rotate(180deg);
+}
+
+/* ── Citations ──────────────────────────────────────────────────────────── */
+
+.cp__cites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cp__cite {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2.5px 7px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.cp__cite:hover,
+.cp__cite:focus-visible {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.cp__cite.is-static {
+  cursor: default;
+}
+/* An estimate's evidence is tinted as an estimate, wherever it appears. */
+.cp__cite--estimate {
+  border-color: var(--estimate-bg);
+  background: var(--estimate-bg);
+  color: var(--estimate);
+}
+.cp__cite--estimate:hover {
+  border-color: var(--estimate);
+  background: var(--estimate-bg);
+  color: var(--estimate);
+}
+.cp__citeId {
+  font-size: 11px;
+}
+
+.cp__pop {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  width: 218px;
+  padding: 9px 10px;
+  text-align: left;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--elev-2);
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+  pointer-events: none;
+  animation: cp-in 140ms var(--ease);
+}
+.cp__popTitle {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-primary);
+  font-size: 10.5px;
+}
+.cp__vals {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1px 10px;
+}
+.cp__vals > div {
+  display: contents;
+}
+.cp__vals dt {
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cp__vals dd {
+  margin: 0;
+  color: var(--text-primary);
+  text-align: right;
+}
+.cp__vals > div.is-output dt,
+.cp__vals > div.is-output dd {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.cp__popDef,
+.cp__popIds {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+.cp__popIds {
+  font-size: 10px;
+}
+.cp__popFoot {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+
+.cpc {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  animation: cp-in 220ms var(--ease);
+}
+.cpc__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.cpc__title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.cpc__kind {
+  flex: 1;
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cpc__meta {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.cpc__warn {
+  color: var(--thin);
+}
+.cpc__note {
+  color: var(--text-faint);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+.cpc__act {
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--bg-surface);
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.cpc__act:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+.cpc__act--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.cpc__act--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #fff;
+}
+.cpc__foot {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.cpc__rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cpc__row {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 7px 8px;
+  text-align: left;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.cpc__row:hover {
+  border-color: var(--accent-border);
+  transform: translateX(1px);
+}
+.cpc__rowHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+}
+.cpc__rank {
+  min-width: 15px;
+  height: 15px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 9.5px;
+  color: var(--text-muted);
+  background: var(--bg-inset);
+  border-radius: 3px;
+}
+.cpc__id {
+  flex: 1;
+  font-size: 11px;
+}
+.cpc__outs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 9px;
+}
+.cpc__out {
+  display: inline-flex;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+.cpc__outName {
+  color: var(--text-faint);
+}
+.cpc__out.is-met {
+  color: var(--met);
+}
+.cpc__out.is-miss {
+  color: var(--miss);
+}
+
+/* ── Proposal card ──────────────────────────────────────────────────────── */
+
+/* No accent bar. The support chip below the heading already states how well
+   the study backs this, in words, which is the honest channel for it. */
+.cpc__support {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--met);
+}
+.cpc__support.is-moderate {
+  color: var(--accent);
+}
+.cpc__support.is-low {
+  color: var(--thin);
+}
+.cpc__base {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.cpc__changes {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 10px;
+  padding: 7px 8px;
+  background: var(--bg-surface);
+  border-radius: var(--r);
+}
+.cpc__changes > div {
+  display: contents;
+}
+.cpc__changes dt {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.cpc__changes dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 11px;
+  text-align: right;
+}
+.cpc__arrow {
+  margin: 0 5px;
+  color: var(--text-ghost);
+}
+.cpc__estLabel {
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cpc__est {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cpc__est li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+/* The tilde is not decoration: it is the mark that says "not measured". */
+.cpc__estVal {
+  color: var(--estimate);
+  font-weight: 600;
+}
+.cpc__est li.is-met .cpc__estVal {
+  color: var(--met);
+}
+.cpc__est li.is-miss .cpc__estVal {
+  color: var(--miss);
+}
+.cpc__supportDetail,
+.cpc__reason {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.cpc__reason {
+  color: var(--text-secondary);
+}
+.cpc__nearest {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* ── Live component card ────────────────────────────────────────────────── */
+/*
+ * The part itself, inside the conversation, at card size. It is the same
+ * viewport the studio uses, so the colour ramp, the arrows and the contact
+ * marks all mean exactly what they mean over there — the assistant is showing
+ * you the workspace's own instrument, not a picture of one.
+ */
+
+.cpc--component {
+  gap: 9px;
+}
+.cpc__stage {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, var(--stage-1), var(--stage-2));
+  border: 1px solid var(--border-subtle);
+}
+.cpc__vp {
+  width: 100%;
+  height: 168px;
+}
+.cpc__stageTag {
+  position: absolute;
+  left: 8px;
+  top: 7px;
+  padding: 1.5px 6px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-faint);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.cpc__phase {
+  position: absolute;
+  right: 8px;
+  bottom: 7px;
+  padding: 1.5px 7px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  color: var(--text-secondary);
+  font-size: 10.5px;
+}
+.cpc__track {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+.cpc__track > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.cpc__reads {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cpc__reads li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+.cpc__reads li > .num {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+/* An estimate must never look like a measurement, here least of all. */
+.cpc__reads li.is-estimated > .num {
+  color: var(--estimate);
+}
+.cpc__reads li.is-demo > .num {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Cohort + sweep cards ───────────────────────────────────────────────── */
+
+.cpc__diffs,
+.cpc__sweep {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cpc__diffs li {
+  display: grid;
+  grid-template-columns: 76px 40px 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.cpc__diffName {
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cpc__diffBar {
+  height: 4px;
+  background: var(--bg-inset);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cpc__diffBar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 320ms var(--ease);
+}
+.cpc__diffPhrase {
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.cpc__sweep li {
+  display: grid;
+  grid-template-columns: 42px 1fr auto auto;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+.cpc__sweepAt {
+  color: var(--text-secondary);
+  text-align: right;
+}
+.cpc__sweepBar {
+  height: 5px;
+  background: var(--bg-inset);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cpc__sweepBar > span {
+  display: block;
+  height: 100%;
+  background: var(--estimate);
+  transition: width 320ms var(--ease);
+}
+.cpc__sweep li.is-support-low .cpc__sweepBar > span {
+  background: var(--thin);
+}
+.cpc__sweep li.is-met .cpc__sweepBar > span {
+  background: var(--met);
+}
+.cpc__sweepVal {
+  color: var(--estimate);
+}
+.cpc__sweep li.is-met .cpc__sweepVal {
+  color: var(--met);
+}
+.cpc__sweepFlag {
+  color: var(--thin);
+  font-size: 9.5px;
+}
+
+/* ── Footer: suggestions + composer ─────────────────────────────────────── */
+
+.cp__foot {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+.cp__sugs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cp__sug {
+  padding: 4px 9px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  text-align: left;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.cp__sug:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.cp__sug:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.cp__composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 6px 6px 6px 10px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur) var(--ease);
+}
+.cp__composer:focus-within {
+  border-color: var(--accent-border);
+}
+.cp__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  resize: none;
+  outline: none;
+  padding: 4px 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-primary);
+  max-height: 140px;
+}
+.cp__input::placeholder {
+  color: var(--text-faint);
+}
+.cp__send {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #fff;
+  transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.cp__send:disabled {
+  background: var(--bg-inset);
+  color: var(--text-ghost);
+}
+.cp__send--stop {
+  background: var(--miss);
+}
+.cp__stopIcon {
+  width: 8px;
+  height: 8px;
+  border-radius: 1.5px;
+  background: currentColor;
+}
+
+/* ── Workspace banner ───────────────────────────────────────────────────── */
+
+.cp__banner {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: var(--accent-bg);
+  border-bottom: 1px solid var(--accent-border);
+  color: var(--accent);
+  font-size: 11.5px;
+  animation: cp-in 180ms var(--ease);
+}
+.cp__bannerPulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: cp-pulse 1.4s var(--ease) infinite;
+}
+.cp__bannerText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cp__bannerStop {
+  color: var(--accent);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Highlight emphasis, applied by the copilot ─────────────────────────── */
+
+.is-ai-highlight {
+  animation: cp-flash 900ms var(--ease);
+}
+
+@keyframes cp-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cp-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes cp-sweep {
+  from { background-position: 180% 0; }
+  to { background-position: -40% 0; }
+}
+@keyframes cp-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes cp-flash {
+  0% { opacity: 0.35; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp__assistant,
+  .cpc,
+  .cp__pop,
+  .cp__banner,
+  .cp__step {
+    animation: none;
+  }
+  .cp__spin,
+  .cp__railPulse,
+  .cp__bannerPulse,
+  .cp__workingText {
+    animation: none;
+  }
+  /* The shorthand goes first: it resets background-clip, and the transparent
+     text would otherwise stay invisible with nothing sweeping behind it. */
+  .cp__workingText {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--text-secondary);
+  }
+  .cpc__row:hover {
+    transform: none;
+  }
+}
+
+/*
+ * Narrow screens: a 380px column beside a chart is worse than no chart, so the
+ * panel becomes a sheet over the workspace rather than a sibling of it.
+ */
+@media (max-width: 1100px) {
+  .cp {
+    width: min(420px, 100vw) !important;
+    box-shadow: var(--elev-2);
+  }
+  .cp__grip {
+    display: none;
+  }
+}
+
+@keyframes cp-breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.6); opacity: 0.45; }
+}
+@keyframes cp-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cp__cap:hover, .cp__cap:focus-visible { transform: none; }
+  .cp__cap:hover .cp__capGo, .cp__cap:focus-visible .cp__capGo { transform: none; }
+  .rsn__pulse, .cp__caret, .rsn__spin { animation: none; }
+  .rsn.is-live .rsn__line {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--text-secondary);
+    animation: none;
+  }
+  .cp__turn--assistant, .rsn__step { animation: none; }
+  .cp__turnAct { opacity: 1; }
+}

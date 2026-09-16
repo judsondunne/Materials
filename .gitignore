@@ -1,0 +1,20 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Secrets. The AI copilot's provider key is server-side only and must never be
+# committed, bundled, or exposed to the browser. `.env.example` is the only
+# env file that may be tracked, and it holds no values.
+.env
+.env.*
+!.env.example
+.claude
+
+# Reference screenshots dropped in the project root during design review.
+# They are inputs to the work, not part of the application.
+image-*.webp
+image-*.png
+
+# Vercel CLI local state.
+.vercel

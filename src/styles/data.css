@@ -1,0 +1,950 @@
+/*
+ * The Data workspace, and the chart chrome every chart in the app draws with.
+ *
+ * This lives in its own file rather than in app.css because the parts it
+ * styles — the scope bar, the card grid, the shared SVG furniture — are one
+ * feature with one set of decisions, and a 1300-line stylesheet is where
+ * decisions go to be lost.
+ *
+ * The SVG rules at the top are load-bearing rather than cosmetic: an unstyled
+ * <line> or <polyline> is filled black by default, so a chart with no
+ * stylesheet is not an ugly chart, it is a black rectangle.
+ */
+
+/* ── Chart frame and shared SVG furniture ────────────────────────────── */
+
+.frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ch__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ch__svg text {
+  fill: var(--text-muted);
+  font-family: var(--font);
+}
+
+/* Anything stroked is a line, not a shape: without this a polyline joins its
+   own ends and floods the plot with black. */
+.ch__grid,
+.ch__axis,
+.ch__front {
+  fill: none;
+}
+
+.ch__grid {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ch__axis {
+  stroke: var(--border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ch__tick {
+  font-size: 10px;
+  fill: var(--text-faint);
+}
+.ch__axisLabel {
+  font-size: 10.5px;
+  font-weight: 500;
+  fill: var(--text-faint);
+  letter-spacing: 0.01em;
+}
+
+/* Hit areas. They must catch the pointer, so they are transparent rather than
+   absent — fill:none would let the pointer straight through. */
+.ch__binHit,
+.ch__barHit {
+  fill: transparent;
+}
+
+/* Distribution bars. The pale bar is every row in scope; the solid one is the
+   subset under investigation, drawn over it at the same x. */
+.ch__barAll {
+  fill: var(--border-strong);
+  transition: fill var(--dur) var(--ease);
+}
+.ch__barIn {
+  fill: var(--accent);
+}
+.ch__bin.is-hover .ch__barAll {
+  fill: var(--text-ghost);
+}
+.ch__region {
+  fill: var(--accent-bg);
+  stroke: var(--accent-border);
+  stroke-width: 1;
+}
+
+/* Ranked bars. A bar carries its category's colour when it has one; without a
+   default fill, the ones that do not would render solid black. */
+.ch__barFill {
+  fill: var(--text-ghost);
+  transition: opacity var(--dur) var(--ease);
+}
+.ch__barLabel {
+  font-size: 10.5px;
+  fill: var(--text-secondary);
+}
+.ch__barValue {
+  font-size: 10px;
+  fill: var(--text-faint);
+}
+/* Sitting on the bar rather than beside it. A bar long enough to need this is
+   by definition one of the strong ones, so it is fully saturated underneath. */
+.ch__barValue.is-inside {
+  fill: var(--bg-surface);
+  font-weight: 600;
+}
+/* Below the noise floor a coefficient is not a finding, so it is drawn as one
+   you are being shown rather than one you should act on. */
+.ch__bar.is-faint {
+  opacity: 0.4;
+}
+.ch__bar.is-hover .ch__barValue,
+.ch__bar.is-hover .ch__barLabel {
+  fill: var(--text-primary);
+}
+.ch__bar.is-clickable {
+  cursor: pointer;
+}
+.ch__bar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.ch__floor {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+/* Scatter and trade-off marks. */
+.ch__tradeDot {
+  fill: var(--text-ghost);
+  transition: fill var(--dur) var(--ease);
+}
+.ch__tradePt.is-front .ch__tradeDot {
+  fill: var(--accent);
+}
+.ch__tradePt.is-sel .ch__tradeDot,
+.ch__tradePt:hover .ch__tradeDot {
+  fill: var(--brand);
+}
+.ch__timeRing {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.5;
+}
+.ch__front {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  opacity: 0.8;
+}
+
+/* Composition rows: one stacked bar per experiment. */
+.ch__compSeg {
+  transition: opacity var(--dur) var(--ease);
+}
+.ch__compRow.is-muted {
+  opacity: 0.32;
+}
+.ch__compRow.is-hover .ch__compSeg {
+  opacity: 1;
+}
+.ch__compId {
+  font-size: 9.5px;
+  fill: var(--text-faint);
+}
+.ch__compVal {
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+/* Tooltip. Drawn inside the SVG so it cannot be clipped out of the plot. */
+.ch__tip {
+  pointer-events: none;
+}
+.ch__tipBg {
+  fill: var(--bg-surface);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  filter: drop-shadow(0 4px 10px rgb(0 0 0 / 0.14));
+}
+.ch__tipTitle {
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+.ch__tipK {
+  font-size: 10.5px;
+  fill: var(--text-faint);
+}
+.ch__tipV {
+  font-size: 10.5px;
+  fill: var(--text-secondary);
+}
+.ch__tipV.is-strong {
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+.ch__tipFlag {
+  font-size: 9.5px;
+  fill: var(--estimate);
+}
+
+/* ── Scope bar ───────────────────────────────────────────────────────── */
+
+.scope {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+.scope__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.scope__search {
+  flex: 1 1 200px;
+  min-width: 160px;
+  max-width: 300px;
+}
+.scope__div {
+  width: 1px;
+  align-self: stretch;
+  min-height: 20px;
+  background: var(--border);
+}
+.scope__spacer {
+  flex: 1;
+}
+.scope__count {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.scope__count strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+/* An empty result is a state worth noticing, not a zero to read past. */
+.scope__count.is-none strong {
+  color: var(--miss);
+}
+
+.scope__filters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.flt {
+  padding: 8px 10px 6px;
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+}
+/* A filter spanning its whole column excludes nothing, and should not look
+   like it is doing work. */
+.flt.is-open {
+  opacity: 0.72;
+}
+.flt__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.flt__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.flt__drop {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-ghost);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.flt__drop:hover {
+  background: var(--bg-hover);
+  color: var(--miss);
+}
+
+.scope__band {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.scope__bandLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.scope__bandTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.scope__bandHint {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.scope__bandHint strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.scope__bandPick {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Card grid ───────────────────────────────────────────────────────── */
+
+.dw__grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  align-items: start;
+}
+.dw__prose {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.dw__caveat {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+.dw__vs {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.dw__ctrlSpacer {
+  flex: 1;
+}
+.dw__ctrlNote {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.cc {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  padding: 14px 14px 12px;
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur) var(--ease), box-shadow 220ms var(--ease);
+}
+.cc:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--elev-2);
+}
+/* Spans only once there is room for them to mean anything. */
+@media (min-width: 1000px) {
+  .cc--span2 { grid-column: span 2; }
+  .cc--span3 { grid-column: span 3; }
+}
+
+.cc__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.cc__titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cc__title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--text-primary);
+}
+/* The sentence under the title is the card's whole claim to your attention,
+   so it gets real line height rather than being squeezed in as a caption. */
+.cc__reading {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.cc__badge {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.cc__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cc__body {
+  min-width: 0;
+}
+.cc__legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.cc__open {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  margin-left: -7px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.cc__open:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+}
+
+/* The placeholder left in the grid while the card is open, so the other cards
+   do not reflow out from under the reader and land somewhere new on close. */
+.cc.is-lifted {
+  visibility: hidden;
+}
+.cc__ghost {
+  min-height: 208px;
+}
+
+/* ── Expanded card ───────────────────────────────────────────────────── */
+
+.ccx__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.42);
+  animation: ccxIn 160ms var(--ease);
+}
+.ccx__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(1100px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--elev-2);
+}
+.ccx__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ccx__close {
+  flex: none;
+}
+.ccx__body {
+  min-width: 0;
+}
+.ccx__detail {
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+@keyframes ccxIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ccx__scrim { animation: none; }
+}
+
+/* ── Input histogram grid ────────────────────────────────────────────── */
+
+.ih {
+  display: grid;
+  gap: 10px 14px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.ih__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.ih__head {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+}
+.ih__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ih__dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+}
+.ih__flag {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.ih__note {
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+.ih__none {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+/* Each cell is one hit target: the whole frame plots that input, rather than
+   a link under it that you have to find. */
+.ih__btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.ih__btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+}
+.ih__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+/* The expanded card draws the same cells without the click target. */
+.ih__btn.is-static {
+  cursor: default;
+  pointer-events: none;
+}
+/* An input that separates the slice from everything else is the finding this
+   grid exists to surface, so it is the one cell that is not plain. */
+.ih__cell.is-notable .ih__btn {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+.ih--tight {
+  gap: 6px 10px;
+}
+
+/* ── Cohort comparison ───────────────────────────────────────────────── */
+
+.cmp {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp__row {
+  display: grid;
+  gap: 2px 10px;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  align-items: center;
+}
+.cmp__cat {
+  grid-column: 1 / -1;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-ghost);
+}
+.cmp__name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cmp__strip {
+  grid-row: span 2;
+  grid-column: 2;
+}
+.cmp__phrase {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-faint);
+}
+
+@media (max-width: 720px) {
+  .cmp__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cmp__strip {
+    grid-row: auto;
+    grid-column: 1;
+  }
+  .ccx__scrim {
+    padding: 12px;
+  }
+}
+
+/* ── Box plot ────────────────────────────────────────────────────────── */
+
+.ch__whisker,
+.ch__cap {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.ch__box {
+  fill: var(--bg-inset);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+/* The median is the one line in a box plot people actually read off, so it is
+   the only part drawn at full contrast. */
+.ch__median {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 2;
+}
+.ch__subMed {
+  fill: var(--accent);
+  stroke: var(--bg-surface);
+  stroke-width: 1;
+}
+.ch__boxVal {
+  font-size: 10px;
+  fill: var(--text-faint);
+}
+.ch__boxRow.is-hover .ch__box {
+  fill: var(--bg-hover);
+  stroke: var(--text-ghost);
+}
+.ch__boxRow.is-hover .ch__barLabel,
+.ch__boxRow.is-hover .ch__boxVal {
+  fill: var(--text-primary);
+}
+
+/* ── Heatmap ─────────────────────────────────────────────────────────── */
+
+/* The cell fill is a diverging ramp computed per cell, so the rule here only
+   has to cover the case it cannot colour: no pair, no value, no fill. */
+.ch__cellFill {
+  fill: var(--bg-inset);
+  stroke: var(--bg-surface);
+  stroke-width: 1;
+}
+.ch__cellFill.is-empty {
+  fill: var(--bg-subtle);
+}
+.ch__cell.is-clickable {
+  cursor: pointer;
+}
+.ch__cell.is-hover .ch__cellFill {
+  stroke: var(--text-primary);
+  stroke-width: 1.5;
+}
+.ch__cell:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.ch__cellDot {
+  fill: var(--text-primary);
+}
+.ch__cellText {
+  font-size: 9.5px;
+  fill: var(--text-secondary);
+}
+/* Past about half saturation the ramp is too dark for body text to sit on. */
+.ch__cellDot.is-onDark,
+.ch__cellText.is-onDark {
+  fill: var(--bg-surface);
+}
+.ch__heatRowLabel,
+.ch__heatColLabel {
+  font-size: 9.5px;
+  fill: var(--text-faint);
+  transition: fill var(--dur) var(--ease);
+}
+.ch__heatRowLabel.is-hover,
+.ch__heatColLabel.is-hover {
+  fill: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Parallel coordinates ────────────────────────────────────────────── */
+
+.ch__parAxis {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ch__parLabel {
+  font-size: 9.5px;
+  fill: var(--text-faint);
+}
+.ch__parHi {
+  font-size: 9px;
+  fill: var(--text-ghost);
+}
+/* Every run is one line. With twenty-five of them the chart only works if the
+   unremarkable ones stay faint enough to read the highlighted one through. */
+.ch__parLine {
+  fill: none;
+  stroke: var(--text-ghost);
+  stroke-width: 1;
+  opacity: 0.5;
+  transition: opacity var(--dur) var(--ease), stroke var(--dur) var(--ease);
+}
+.ch__parLine.is-muted {
+  opacity: 0.16;
+}
+.ch__parLine.is-hover,
+.ch__parLine.is-front {
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 1;
+}
+.ch__parDot {
+  fill: var(--accent);
+  stroke: var(--bg-surface);
+  stroke-width: 1;
+}
+.ch__parId {
+  font-size: 9.5px;
+  fill: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Timeline ────────────────────────────────────────────────────────── */
+
+.ch__timeLine {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.ch__timeDot {
+  fill: var(--accent);
+  transition: fill var(--dur) var(--ease);
+}
+.ch__timePt.is-muted {
+  opacity: 0.3;
+}
+.ch__timePt.is-hover .ch__timeDot {
+  fill: var(--brand);
+}
+
+/* ── Chips ───────────────────────────────────────────────────────────── */
+
+.rchip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+/* A coefficient that clears the noise floor is a finding; one that does not is
+   a number, and the chip is the only place that difference is stated. */
+.rchip.is-real {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+.rchip.is-noise {
+  opacity: 0.75;
+}
+.rchip__val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.rchip.is-real .rchip__val {
+  color: var(--accent);
+}
+.rchip__label {
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+.minichip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.minichip.is-on {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.minichip.is-warn {
+  background: var(--miss-bg);
+  color: var(--miss);
+}
+
+/* ── Summary statistics ──────────────────────────────────────────────── */
+
+.stats {
+  margin: 0;
+  display: grid;
+  gap: 4px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+}
+.stats__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.stats__row dt {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+.stats__row dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Legend variants ─────────────────────────────────────────────────── */
+
+.lg--all::before { background: var(--border-strong); }
+.lg--pos::before { background: var(--accent); }
+.lg--neg::before { background: var(--miss); }
+.lg--front::before { background: var(--accent); }
+.lg--dominated::before { background: var(--text-ghost); }
+.lg--box::before { border-radius: 2px; width: 14px; height: 9px; background: var(--bg-inset); box-shadow: inset 0 0 0 1px var(--border-strong); }
+.lg--median::before { border-radius: 0; width: 2px; height: 12px; background: var(--text-primary); }
+.lg--tri::before { border-radius: 0; width: 0; height: 0; background: none; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--accent); }
+.lg--ring::before { background: none; box-shadow: 0 0 0 1.5px var(--text-primary); width: 7px; height: 7px; }
+.lg--floor::before { border-radius: 0; width: 14px; height: 0; background: none; border-top: 1px dashed var(--border-strong); }
+.lg--brush::before { background: var(--accent); }
+/* The gradient key stands in for the whole diverging ramp, so it shows both
+   ends of it rather than picking one. */
+.lg--grad::before {
+  border-radius: 2px;
+  width: 42px;
+  height: 9px;
+  background: linear-gradient(to right, var(--miss), var(--bg-surface), var(--accent));
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.lg--swatch::before { display: none; }
+.lg__sw {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+/* ── Odds and ends ───────────────────────────────────────────────────── */
+
+.dw {
+  display: flex;
+  flex-direction: column;
+}
+.ccx {
+  display: contents;
+}
+/* Full screen, the controls get the room to sit on one line. */
+.cc__controls--wide {
+  gap: 12px;
+}

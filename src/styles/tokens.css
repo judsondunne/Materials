@@ -1,0 +1,139 @@
+/*
+ * Colour carries meaning here or it is not used.
+ *
+ * Neutrals do the layout. Accent marks the thing the user chose. The three
+ * status colours mean exactly one thing each — met, missed, unsupported — and
+ * appear nowhere decorative. The seven category hues label the shelves of the
+ * formulation and are muted on purpose: a composition bar is a legend, not a
+ * chart, and it sits behind the numbers rather than competing with them.
+ */
+:root {
+  --bg-app: #fdfdfd;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f4f4f6;
+  --bg-hover: #f8f8fa;
+  --bg-sunken: #fafafb;
+  --bg-inset: #f1f1f4;
+
+  --text-primary: #16161a;
+  --text-secondary: #55555f;
+  --text-muted: #73737f;
+  --text-faint: #9a9aa4;
+  --text-ghost: #c2c2ca;
+
+  --border: #e7e7ec;
+  --border-subtle: #f0f0f3;
+  --border-strong: #d3d3db;
+
+  /*
+   * The brand hue. Distinct from every colour that already carries a meaning —
+   * the accent blue for "you chose this", green for met, red for missed, amber
+   * for thin, violet for estimated — so the mark and the active destination can
+   * be recognisable without ever being mistaken for a status.
+   */
+  --brand: #0e7c86;
+  --brand-bg: #e9f5f6;
+  --brand-border: #b4dde1;
+
+  --accent: #2f5fd0;
+  --accent-hover: #24499f;
+  --accent-bg: #edf2fd;
+  --accent-border: #c5d6f7;
+
+  /* Target satisfied. */
+  --met: #14714f;
+  --met-bg: #ebf7f1;
+  --met-border: #bde3d2;
+  /* Target missed. */
+  --miss: #a8341f;
+  --miss-bg: #fdf0ed;
+  --miss-border: #f2cfc6;
+  /* Estimate resting on thin data. */
+  --thin: #8a5a11;
+  --thin-bg: #fdf6ea;
+  --thin-border: #ecd9b4;
+
+  /* An estimated quantity, never a measured one. */
+  --estimate: #6b4ea8;
+  --estimate-bg: #f4f0fb;
+
+  --cat-polymer: #3c68a8;
+  --cat-filler: #4a4a52;
+  --cat-plast: #9a6a38;
+  --cat-additive: #6f5596;
+  --cat-coagent: #7d7226;
+  --cat-curing: #9c4a48;
+  --cat-process: #2a7c72;
+  --cat-other: #8a8a92;
+
+  --side-w: 216px;
+  --page-max: 1320px;
+
+  --r-sm: 4px;
+  --r: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  /* Two elevations. Content rests on the page; only a true overlay floats. */
+  --elev-1: 0 1px 2px rgba(20, 20, 26, 0.04);
+  --elev-2: 0 8px 28px rgba(20, 20, 26, 0.1), 0 2px 6px rgba(20, 20, 26, 0.05);
+
+  --font:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur: 130ms;
+}
+
+[data-theme='dark'] {
+  --brand: #45c2ce;
+  --brand-bg: #0d2427;
+  --brand-border: #1c4449;
+  --bg-app: #0e0e11;
+  --bg-surface: #16161a;
+  --bg-subtle: #1e1e23;
+  --bg-hover: #23232a;
+  --bg-sunken: #121215;
+  --bg-inset: #202027;
+
+  --text-primary: #f2f2f4;
+  --text-secondary: #a8a8b2;
+  --text-muted: #8e8e99;
+  --text-faint: #71717c;
+  --text-ghost: #4a4a55;
+
+  --border: #26262d;
+  --border-subtle: #1d1d23;
+  --border-strong: #3a3a44;
+
+  --accent: #6c93ea;
+  --accent-hover: #89a9f2;
+  --accent-bg: #172038;
+  --accent-border: #2b3a61;
+
+  --met: #4cc294;
+  --met-bg: #10241d;
+  --met-border: #1f4437;
+  --miss: #ef8571;
+  --miss-bg: #2a1713;
+  --miss-border: #4a2620;
+  --thin: #dfa94e;
+  --thin-bg: #261d0f;
+  --thin-border: #453419;
+
+  --estimate: #a88fdc;
+  --estimate-bg: #1d1730;
+
+  --cat-polymer: #6a95d8;
+  --cat-filler: #91919c;
+  --cat-plast: #c8925c;
+  --cat-additive: #9d83c9;
+  --cat-coagent: #b0a344;
+  --cat-curing: #cc7472;
+  --cat-process: #48a89c;
+  --cat-other: #8f8f99;
+
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2: 0 12px 34px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+}

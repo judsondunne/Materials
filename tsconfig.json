@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    /* The AI endpoint runs in Node inside the Vite dev server, so the server
+       half of the tree needs Node's types. They are available to `src` too,
+       which is harmless: nothing in `src` imports `node:*`, and the secret
+       cannot reach the client regardless because it is never a VITE_ variable. */
+    "types": ["node"]
+  },
+  "include": ["src", "server", "api", "vite.config.ts"]
+}
