@@ -138,9 +138,14 @@ export async function handleChat(req: IncomingMessage, res: ServerResponse): Pro
 
   const key = describeKey();
   if (!key.present) {
+    // This message reaches a real person looking at the panel, and the fix
+    // differs by where the app is running, so it names both rather than the
+    // one the author happened to be using.
     sendJson(res, 503, {
       error:
-        'The AI copilot is not configured: no OPENROUTER_API_KEY on the server. Add it to .env.server.local and restart. The rest of the application works normally without it.',
+        'The AI copilot is not configured: no OPENROUTER_API_KEY on the server. ' +
+        'Locally, add it to .env.server.local and restart; in deployment, set it as an ' +
+        'environment variable. The rest of the application works normally without it.',
     });
     return;
   }
