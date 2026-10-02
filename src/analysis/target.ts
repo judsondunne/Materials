@@ -1,4 +1,4 @@
-import type { Dataset, FieldId } from '../domain/types';
+import type { Dataset, FieldId } from '../domain/types.js';
 
 /**
  * A specification for the material the scientist wants, and the machinery for

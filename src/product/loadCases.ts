@@ -1,4 +1,4 @@
-import type { GeometryType, LoadAxis, LoadCaseDef, LoadControlDef, LoadState } from './types';
+import type { GeometryType, LoadAxis, LoadCaseDef, LoadControlDef, LoadState } from './types.js';
 
 /**
  * The demonstration load cases.

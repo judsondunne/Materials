@@ -1,5 +1,5 @@
-import { detectExclusivity, inferFamilies } from './families';
-import { inferDecimals } from './format';
+import { detectExclusivity, inferFamilies } from './families.js';
+import { inferDecimals } from './format.js';
 import type {
   DataQualityReport,
   Dataset,
@@ -9,7 +9,7 @@ import type {
   FieldMeta,
   QualityIssue,
   RawDataset,
-} from './types';
+} from './types.js';
 
 const PROCESS_HINTS = /temperature|pressure|time\s*\(|speed|rpm|humidity/i;
 const ID_PATTERN = /^(\d{4})(\d{2})(\d{2})_[A-Z]+_(\d+)$/;

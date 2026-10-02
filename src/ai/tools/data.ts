@@ -1,6 +1,6 @@
-import { compareCohort, phraseComparison } from '../../analysis/cohort';
-import { compareLocalNeighbourhood } from '../../analysis/neighbourhood';
-import { findAllOutliers, findOutputOutliers, findRelationshipOutliers, findUnusualFormulations } from '../../analysis/outliers';
+import { compareCohort, phraseComparison } from '../../analysis/cohort.js';
+import { compareLocalNeighbourhood } from '../../analysis/neighbourhood.js';
+import { findAllOutliers, findOutputOutliers, findRelationshipOutliers, findUnusualFormulations } from '../../analysis/outliers.js';
 import {
   outputTensions,
   phraseRelationship,
@@ -8,11 +8,11 @@ import {
   relationship,
   RELATIONSHIP_CAVEAT,
   strengthLabel,
-} from '../../analysis/relationships';
-import { describe, paretoFront } from '../../analysis/stats';
-import { describeConstraint, summariseTarget } from '../../analysis/target';
-import { formatValue } from '../../domain/format';
-import type { FieldId } from '../../domain/types';
+} from '../../analysis/relationships.js';
+import { describe, paretoFront } from '../../analysis/stats.js';
+import { describeConstraint, summariseTarget } from '../../analysis/target.js';
+import { formatValue } from '../../domain/format.js';
+import type { FieldId } from '../../domain/types.js';
 import {
   citeAnalysis,
   citeCohort,
@@ -31,7 +31,7 @@ import {
   type ToolContext,
   type ToolDef,
   type ToolResult,
-} from './kit';
+} from './kit.js';
 
 /**
  * The deterministic data tools.

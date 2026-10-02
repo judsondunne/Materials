@@ -1,4 +1,4 @@
-import type { Dataset, FieldId, FieldMeta } from './types';
+import type { Dataset, FieldId, FieldMeta } from './types.js';
 
 /**
  * The display taxonomy for formulation and process variables.

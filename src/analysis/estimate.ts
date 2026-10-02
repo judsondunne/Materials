@@ -1,4 +1,4 @@
-import type { Dataset, FieldId } from '../domain/types';
+import type { Dataset, FieldId } from '../domain/types.js';
 
 /**
  * Estimating outcomes for a formulation nobody has made yet.

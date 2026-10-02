@@ -1,6 +1,6 @@
-import type { Dataset, FieldId } from '../domain/types';
-import { describe, olsFit, quantileSorted } from './stats';
-import { relationship } from './relationships';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { describe, olsFit, quantileSorted } from './stats.js';
+import { relationship } from './relationships.js';
 
 /**
  * Finding the experiments that do not sit with the others.

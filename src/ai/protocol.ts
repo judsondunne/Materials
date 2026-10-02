@@ -1,4 +1,4 @@
-import type { ConstraintKind } from '../analysis/target';
+import type { ConstraintKind } from '../analysis/target.js';
 
 /**
  * The wire contract between the server-side agent and the browser.

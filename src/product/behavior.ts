@@ -1,5 +1,5 @@
-import type { Dataset, FieldId } from '../domain/types';
-import type { DemoEngineeringParameters } from './types';
+import type { Dataset, FieldId } from '../domain/types.js';
+import type { DemoEngineeringParameters } from './types.js';
 
 /**
  * The demonstration mapping from measured material properties to component

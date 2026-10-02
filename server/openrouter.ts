@@ -1,5 +1,5 @@
-import { AI_CONFIG, APP_ATTRIBUTION } from './config';
-import { getApiKey, redact } from './env';
+import { AI_CONFIG, APP_ATTRIBUTION } from './config.js';
+import { getApiKey, redact } from './env.js';
 
 /**
  * The OpenRouter transport.

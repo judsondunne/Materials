@@ -1,15 +1,15 @@
-import type { EstimatorScales, ScenarioInputs, ScenarioEstimate } from '../../analysis/estimate';
-import { scenarioFromRow } from '../../analysis/estimate';
-import type { TargetConstraint, TargetProfile } from '../../analysis/target';
-import type { Dataset, FieldId } from '../../domain/types';
+import type { EstimatorScales, ScenarioInputs, ScenarioEstimate } from '../../analysis/estimate.js';
+import { scenarioFromRow } from '../../analysis/estimate.js';
+import type { TargetConstraint, TargetProfile } from '../../analysis/target.js';
+import type { Dataset, FieldId } from '../../domain/types.js';
 import type {
   AppContextPayload,
   CardData,
   Citation,
   TargetConstraintPayload,
   UiAction,
-} from '../protocol';
-import type { ToolSchema, ValidationError, Vocabulary } from '../schema';
+} from '../protocol.js';
+import type { ToolSchema, ValidationError, Vocabulary } from '../schema.js';
 
 /**
  * The contract every tool obeys.

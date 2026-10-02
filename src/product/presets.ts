@@ -6,11 +6,11 @@ import {
   type NeighbourRef,
   type ScenarioInputs,
   type SupportLevel,
-} from '../analysis/estimate';
-import { searchScenarios } from '../analysis/search';
-import type { Dataset, FieldId } from '../domain/types';
-import { measuredOutputs } from './resolve';
-import type { ProductProgram } from './types';
+} from '../analysis/estimate.js';
+import { searchScenarios } from '../analysis/search.js';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { measuredOutputs } from './resolve.js';
+import type { ProductProgram } from './types.js';
 
 /**
  * Starting formulations for a product program.

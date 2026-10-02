@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { handleChat, sendJson } from '../../server/handlers';
+import { handleChat, sendJson } from '../../server/handlers.js';
 
 export const config = {
   // The agent takes several model round trips before it has an answer, and the

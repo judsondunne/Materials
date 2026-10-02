@@ -4,23 +4,23 @@ import {
   scenarioFromRow,
   type ScenarioInputs,
   type SupportLevel,
-} from '../../analysis/estimate';
-import { describeConstraint } from '../../analysis/target';
-import { formatValue } from '../../domain/format';
-import type { Dataset, FieldId } from '../../domain/types';
-import { materialBehavior, SEVERITY_COPY, severityOf } from '../../product/behavior';
-import { candidateReport, makeCandidate } from '../../product/candidates';
-import { defaultLoadState, formatLoad, loadCase, setLoadAxis, zeroLoad } from '../../product/loadCases';
-import { findPreset, presetsFor } from '../../product/presets';
-import { resolveStudioFormulation } from '../../product/studio';
-import { PROGRAM_SPECS, programSpec } from '../../product/programs';
-import { checkRequirements, getProgram, measuredOutputs } from '../../product/resolve';
-import type { LoadAxis, LoadState, ProductProgram, RequirementCheck } from '../../product/types';
-import { REGIONS, REGIONS_BY_GEOMETRY } from '../../product3d/regions';
-import { summariseField, type WarpParams } from '../../product3d/warp';
-import { surfaceSamples } from '../../product3d/geometry';
-import { recoveredFraction } from '../../product3d/timeline';
-import type { ComponentCardData, UiAction } from '../protocol';
+} from '../../analysis/estimate.js';
+import { describeConstraint } from '../../analysis/target.js';
+import { formatValue } from '../../domain/format.js';
+import type { Dataset, FieldId } from '../../domain/types.js';
+import { materialBehavior, SEVERITY_COPY, severityOf } from '../../product/behavior.js';
+import { candidateReport, makeCandidate } from '../../product/candidates.js';
+import { defaultLoadState, formatLoad, loadCase, setLoadAxis, zeroLoad } from '../../product/loadCases.js';
+import { findPreset, presetsFor } from '../../product/presets.js';
+import { resolveStudioFormulation } from '../../product/studio.js';
+import { PROGRAM_SPECS, programSpec } from '../../product/programs.js';
+import { checkRequirements, getProgram, measuredOutputs } from '../../product/resolve.js';
+import type { LoadAxis, LoadState, ProductProgram, RequirementCheck } from '../../product/types.js';
+import { REGIONS, REGIONS_BY_GEOMETRY } from '../../product3d/regions.js';
+import { summariseField, type WarpParams } from '../../product3d/warp.js';
+import { surfaceSamples } from '../../product3d/geometry.js';
+import { recoveredFraction } from '../../product3d/timeline.js';
+import type { ComponentCardData, UiAction } from '../protocol.js';
 import {
   citeEstimate,
   citeExperiment,
@@ -32,7 +32,7 @@ import {
   type ToolContext,
   type ToolDef,
   type ToolResult,
-} from './kit';
+} from './kit.js';
 
 /**
  * The product tools.

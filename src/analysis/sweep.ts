@@ -1,4 +1,4 @@
-import type { Dataset, FieldId } from '../domain/types';
+import type { Dataset, FieldId } from '../domain/types.js';
 import {
   estimate,
   formulationTotal,
@@ -6,8 +6,8 @@ import {
   type EstimatorScales,
   type ScenarioInputs,
   type SupportLevel,
-} from './estimate';
-import { evaluateOutputs, isTargetSet, type TargetProfile } from './target';
+} from './estimate.js';
+import { evaluateOutputs, isTargetSet, type TargetProfile } from './target.js';
 
 /**
  * Sweeping a scenario across one or two inputs.

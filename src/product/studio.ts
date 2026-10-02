@@ -1,8 +1,8 @@
-import { scenarioFromRow, type ScenarioInputs } from '../analysis/estimate';
-import type { Dataset } from '../domain/types';
-import type { FormulationSource } from '../state/appState';
-import { defaultPreset, sameFormulation } from './presets';
-import type { ProductProgram } from './types';
+import { scenarioFromRow, type ScenarioInputs } from '../analysis/estimate.js';
+import type { Dataset } from '../domain/types.js';
+import type { FormulationSource } from '../state/appState.js';
+import { defaultPreset, sameFormulation } from './presets.js';
+import type { ProductProgram } from './types.js';
 
 /**
  * Which formulation the studio is holding, and whether its properties are

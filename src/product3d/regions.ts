@@ -1,4 +1,4 @@
-import type { GeometryType } from '../product/types';
+import type { GeometryType } from '../product/types.js';
 
 /**
  * The named regions of each component.

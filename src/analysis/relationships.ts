@@ -1,6 +1,6 @@
-import { categoryOf, type CategoryId } from '../domain/variables';
-import type { Dataset, FieldId } from '../domain/types';
-import { criticalR, pearson, spearman } from './stats';
+import { categoryOf, type CategoryId } from '../domain/variables.js';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { criticalR, pearson, spearman } from './stats.js';
 
 /**
  * Observed relationships between two variables in the experimental history.

@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { handleHealth, sendJson } from '../../server/handlers';
+import { handleHealth, sendJson } from '../../server/handlers.js';
 
 /**
  * GET /api/ai/health in deployment.

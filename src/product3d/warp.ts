@@ -1,4 +1,4 @@
-import type { GeometryType, LoadState } from '../product/types';
+import type { GeometryType, LoadState } from '../product/types.js';
 
 /**
  * The demonstration engineering model.

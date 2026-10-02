@@ -1,12 +1,12 @@
-import { buildScales } from '../../analysis/estimate';
-import type { Dataset } from '../../domain/types';
-import type { AppContextPayload } from '../protocol';
-import { toJsonSchema, validateArgs, type Vocabulary } from '../schema';
-import { DATA_TOOLS } from './data';
-import { PRODUCT_TOOLS } from './product';
-import { SCENARIO_TOOLS } from './scenario';
-import { UI_TOOLS } from './ui';
-import type { ToolContext, ToolDef, ToolResult } from './kit';
+import { buildScales } from '../../analysis/estimate.js';
+import type { Dataset } from '../../domain/types.js';
+import type { AppContextPayload } from '../protocol.js';
+import { toJsonSchema, validateArgs, type Vocabulary } from '../schema.js';
+import { DATA_TOOLS } from './data.js';
+import { PRODUCT_TOOLS } from './product.js';
+import { SCENARIO_TOOLS } from './scenario.js';
+import { UI_TOOLS } from './ui.js';
+import type { ToolContext, ToolDef, ToolResult } from './kit.js';
 
 /**
  * The tool registry and the single path from a model's tool call to application
@@ -143,4 +143,4 @@ export function toolsByKind(): Record<'data' | 'scenario' | 'ui' | 'product', st
   return out;
 }
 
-export type { ToolContext, ToolDef, ToolResult } from './kit';
+export type { ToolContext, ToolDef, ToolResult } from './kit.js';

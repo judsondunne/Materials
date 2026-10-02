@@ -1,4 +1,4 @@
-import type { ProductProgramSpec } from './types';
+import type { ProductProgramSpec } from './types.js';
 
 /**
  * Four demonstration product programs.

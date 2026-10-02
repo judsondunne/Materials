@@ -1,6 +1,6 @@
-import { categoryOf, type CategoryId } from '../domain/variables';
-import type { Dataset, FieldId } from '../domain/types';
-import { describe, quantileSorted, type Summary } from './stats';
+import { categoryOf, type CategoryId } from '../domain/variables.js';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { describe, quantileSorted, type Summary } from './stats.js';
 
 /**
  * Comparing two groups of experiments on their inputs.

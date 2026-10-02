@@ -1,4 +1,4 @@
-import type { Dataset, FieldId } from '../domain/types';
+import type { Dataset, FieldId } from '../domain/types.js';
 import {
   estimate,
   formulationTotal,
@@ -6,9 +6,9 @@ import {
   type NeighbourRef,
   type ScenarioInputs,
   type SupportLevel,
-} from './estimate';
-import { applyInput, SUPPORT_ORDER } from './sweep';
-import { evaluateOutputs, isTargetSet, type TargetProfile } from './target';
+} from './estimate.js';
+import { applyInput, SUPPORT_ORDER } from './sweep.js';
+import { evaluateOutputs, isTargetSet, type TargetProfile } from './target.js';
 
 /**
  * Searching the data-supported scenario space for a formulation closer to the

@@ -1,4 +1,4 @@
-import type { Exclusivity, FamilyId, FieldId } from './types';
+import type { Exclusivity, FamilyId, FieldId } from './types.js';
 
 /**
  * Display metadata for families we can name. Grouping itself is inferred from the

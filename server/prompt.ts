@@ -1,9 +1,9 @@
-import { describeConstraint } from '../src/analysis/target';
-import { formatValue } from '../src/domain/format';
-import type { Dataset } from '../src/domain/types';
-import type { AppContextPayload } from '../src/ai/protocol';
-import { toTargetProfile } from '../src/ai/tools/kit';
-import { toolsByKind } from '../src/ai/tools';
+import { describeConstraint } from '../src/analysis/target.js';
+import { formatValue } from '../src/domain/format.js';
+import type { Dataset } from '../src/domain/types.js';
+import type { AppContextPayload } from '../src/ai/protocol.js';
+import { toTargetProfile } from '../src/ai/tools/kit.js';
+import { toolsByKind } from '../src/ai/tools/index.js';
 
 /**
  * The system instruction.

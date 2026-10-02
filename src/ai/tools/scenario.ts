@@ -3,13 +3,13 @@ import {
   formulationTotal,
   scenarioFromRow,
   SUPPORT_COPY,
-} from '../../analysis/estimate';
-import { neighbourhoodOfScenario } from '../../analysis/neighbourhood';
-import { localSensitivity, searchMinimalChange, searchScenarios, type Candidate } from '../../analysis/search';
-import { applyInputs, linspaceOver, observedValues, runGridSweep, runSweep, sweepExtremes, type SweepResult } from '../../analysis/sweep';
-import { evaluateOutputs, isTargetSet } from '../../analysis/target';
-import type { FieldId } from '../../domain/types';
-import type { CardData, SweepOverlay, UiAction } from '../protocol';
+} from '../../analysis/estimate.js';
+import { neighbourhoodOfScenario } from '../../analysis/neighbourhood.js';
+import { localSensitivity, searchMinimalChange, searchScenarios, type Candidate } from '../../analysis/search.js';
+import { applyInputs, linspaceOver, observedValues, runGridSweep, runSweep, sweepExtremes, type SweepResult } from '../../analysis/sweep.js';
+import { evaluateOutputs, isTargetSet } from '../../analysis/target.js';
+import type { FieldId } from '../../domain/types.js';
+import type { CardData, SweepOverlay, UiAction } from '../protocol.js';
 import {
   citeEstimate,
   citeExperiments,
@@ -23,7 +23,7 @@ import {
   type ToolContext,
   type ToolDef,
   type ToolResult,
-} from './kit';
+} from './kit.js';
 
 /**
  * The scenario tools.

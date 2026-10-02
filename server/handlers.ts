@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import rawDataset from '../src/data/dataset.json';
-import { parseDataset } from '../src/domain/parse';
-import type { Dataset, RawDataset } from '../src/domain/types';
-import type { AgentEvent, ChatRequest } from '../src/ai/protocol';
-import { runAgent } from './agent';
-import { AI_CONFIG } from './config';
-import { describeKey, redact } from './env';
+import rawDataset from '../src/data/dataset.json' with { type: 'json' };
+import { parseDataset } from '../src/domain/parse.js';
+import type { Dataset, RawDataset } from '../src/domain/types.js';
+import type { AgentEvent, ChatRequest } from '../src/ai/protocol.js';
+import { runAgent } from './agent.js';
+import { AI_CONFIG } from './config.js';
+import { describeKey, redact } from './env.js';
 
 /**
  * The AI endpoint, as plain Node request handlers.

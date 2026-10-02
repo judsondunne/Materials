@@ -1,5 +1,5 @@
-import type { Dataset, FieldId } from '../domain/types';
-import { buildScales, estimate, type EstimatorScales, type ScenarioInputs } from './estimate';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { buildScales, estimate, type EstimatorScales, type ScenarioInputs } from './estimate.js';
 
 /**
  * An experiment's neighbourhood: the formulations nearest it, and how their

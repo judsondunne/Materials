@@ -1,4 +1,4 @@
-import { quantileSorted } from '../analysis/stats';
+import { quantileSorted } from '../analysis/stats.js';
 import {
   evaluateConstraint,
   outputSpans,
@@ -6,10 +6,10 @@ import {
   summariseTarget,
   type TargetConstraint,
   type TargetProfile,
-} from '../analysis/target';
-import type { Dataset, FieldId } from '../domain/types';
-import { loadCase } from './loadCases';
-import { PROGRAM_SPECS, DEFAULT_PROGRAM_ID, programSpec } from './programs';
+} from '../analysis/target.js';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { loadCase } from './loadCases.js';
+import { PROGRAM_SPECS, DEFAULT_PROGRAM_ID, programSpec } from './programs.js';
 import type {
   LoadCaseDef,
   ProductProgram,
@@ -17,7 +17,7 @@ import type {
   RequirementCheck,
   RequirementSpec,
   ResolvedRequirement,
-} from './types';
+} from './types.js';
 
 /**
  * Turning a declared demo brief into concrete numbers, against real data.

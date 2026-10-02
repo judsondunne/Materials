@@ -5,10 +5,10 @@ import {
   type NeighbourRef,
   type ScenarioInputs,
   type SupportLevel,
-} from '../analysis/estimate';
-import type { Dataset, FieldId } from '../domain/types';
-import { checkRequirements } from './resolve';
-import type { ProductProgram, RequirementCheck } from './types';
+} from '../analysis/estimate.js';
+import type { Dataset, FieldId } from '../domain/types.js';
+import { checkRequirements } from './resolve.js';
+import type { ProductProgram, RequirementCheck } from './types.js';
 
 /**
  * Candidate formulations: the thing a scientist would actually take to the lab.

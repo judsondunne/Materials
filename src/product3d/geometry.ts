@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import type { GeometryType } from '../product/types';
-import { DIMS, type Vec3 } from './warp';
+import type { GeometryType } from '../product/types.js';
+import { DIMS, type Vec3 } from './warp.js';
 
 /**
  * Procedural component geometry.
@@ -460,7 +460,7 @@ export function buildComponent(type: GeometryType, quality: Quality = 'high'): G
   return { ...render, pick };
 }
 
-export { REGIONS, REGIONS_BY_GEOMETRY, regionInfo, type RegionInfo } from './regions';
+export { REGIONS, REGIONS_BY_GEOMETRY, regionInfo, type RegionInfo } from './regions.js';
 
 // ── Small vector helpers ───────────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
-import { suggestConstraint, summariseTarget, describeConstraint } from '../../analysis/target';
-import { formatValue } from '../../domain/format';
-import type { FieldId } from '../../domain/types';
-import type { RouteName, TargetConstraintPayload, UiAction } from '../protocol';
+import { suggestConstraint, summariseTarget, describeConstraint } from '../../analysis/target.js';
+import { formatValue } from '../../domain/format.js';
+import type { FieldId } from '../../domain/types.js';
+import type { RouteName, TargetConstraintPayload, UiAction } from '../protocol.js';
 import {
   citeCohort,
   citeExperiments,
@@ -13,7 +13,7 @@ import {
   toTargetProfile,
   type ToolDef,
   type ToolResult,
-} from './kit';
+} from './kit.js';
 
 /**
  * The tools that move the workspace.

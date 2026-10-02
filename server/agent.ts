@@ -1,10 +1,10 @@
-import type { Dataset } from '../src/domain/types';
-import type { AgentEvent, AgentStep, CardData, ChatRequest, Citation, UsageInfo } from '../src/ai/protocol';
-import { validateUiAction } from '../src/ai/protocol';
-import { buildToolContext, runTool, toolDeclarations } from '../src/ai/tools';
-import { AI_CONFIG } from './config';
-import { cacheable, OpenRouterError, streamWithRetry, type ChatMessage } from './openrouter';
-import { buildContextMessage, buildSystemPrompt } from './prompt';
+import type { Dataset } from '../src/domain/types.js';
+import type { AgentEvent, AgentStep, CardData, ChatRequest, Citation, UsageInfo } from '../src/ai/protocol.js';
+import { validateUiAction } from '../src/ai/protocol.js';
+import { buildToolContext, runTool, toolDeclarations } from '../src/ai/tools/index.js';
+import { AI_CONFIG } from './config.js';
+import { cacheable, OpenRouterError, streamWithRetry, type ChatMessage } from './openrouter.js';
+import { buildContextMessage, buildSystemPrompt } from './prompt.js';
 
 /**
  * The agent loop.
